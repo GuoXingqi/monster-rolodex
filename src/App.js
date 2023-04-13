@@ -109,3 +109,4 @@ const App = () => {
 // }
 
 export default App;
+//functional components are components too, they need to be 'export defaul'ed after defination
