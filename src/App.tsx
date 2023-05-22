@@ -3,24 +3,33 @@ import { useState, useEffect} from 'react';
 import SearchBox from './components/search-box/search-box-component';
 import CardList from './components/card-list/card-list-component';
 
+import { getData } from './utils/data.utils';
+import { ChangeEvent } from 'react';
+
 import './App.css';
 
 //functional components
 
+export type Monster = {
+  id: string;
+  name: string;
+  email: string;
+}
+
 const App = () => {
 
-  const [monsters, setMonsters] = useState([]);//inital monster array
+  const [monsters, setMonsters] = useState<Monster[]>([]);//inital monster array
   const [searchField, setSearchField] = useState('');//inital searh field
   const [filteredMonsters, setfilteredMonsters] = useState(monsters);//inital monster array
 
-  console.log('render');
   //hook fetched monsters, with re-hook condition null
   useEffect( () => {
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then((response) => response.json())
-      .then((users) => setMonsters(users)
-      );
-  }, [])
+      const fetchUsers = async () => {
+        const users = await getData<Monster[]>('https://jsonplaceholder.typicode.com/users');
+        setMonsters(users);
+      };
+      fetchUsers();
+  }, []);
 
   //hook set new filteres monster values only if monsters/searchField changes
   useEffect( ()=>{
@@ -32,8 +41,8 @@ const App = () => {
   },[monsters, searchField])
 
   //set changedSearchField on event changes
-  const onSearchChange = (event) => {
-    const changedSearchField = event.target.value.toLocaleLowerCase();
+  const onSearchChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    const changedSearchField: string = event.target.value.toLocaleLowerCase();
     setSearchField(changedSearchField);
   }
 
